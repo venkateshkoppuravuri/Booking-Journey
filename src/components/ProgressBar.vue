@@ -28,8 +28,8 @@
 import { defineProps, computed } from "vue";
 
 const props = defineProps({
-  steps: Array, // List of steps in the progress
-  currentStep: Number, // Current step number
+  steps: Array,
+  currentStep: Number,
 });
 
 const progressPercentage = computed(() => {
