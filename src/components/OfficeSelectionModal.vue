@@ -38,6 +38,7 @@ import { mockApi } from "@/services/api";
 import LoadingSpinner from "./LoadingSpinner.vue";
 import OfficeList from "./OfficeList.vue";
 import BackButton from "./BackButton.vue";
+import "../styles/style.scss";
 
 const props = defineProps({
   show: Boolean,
@@ -85,10 +86,3 @@ const save = () => {
   emit("update:show", false);
 };
 </script>
-
-<style scoped>
-.modal {
-  display: block;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-</style>
