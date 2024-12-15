@@ -4,21 +4,19 @@
       <div
         class="progress-bar bg-primary"
         role="progressbar"
-        :style="{ width: `${(currentStep + 1) * (100 / steps.length)}%` }"
-        :aria-valuenow="(currentStep + 1) * (100 / steps.length)"
+        :style="progressBarStyle"
+        :aria-valuenow="progressPercentage"
         aria-valuemin="0"
         aria-valuemax="100"
       ></div>
     </div>
+    
     <div class="d-flex justify-content-between mt-2">
       <div
         v-for="(step, index) in steps"
         :key="step.id"
         class="text-center"
-        :class="{
-          'text-primary fw-bold': currentStep === index,
-          'text-muted': currentStep !== index,
-        }"
+        :class="stepClass(index)"
       >
         {{ step.title }}
       </div>
@@ -27,10 +25,50 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 
-defineProps({
-  steps: Array,
-  currentStep: Number,
+const props = defineProps({
+  steps: Array, // List of steps in the progress
+  currentStep: Number, // Current step number
 });
+
+const progressPercentage = computed(() => {
+  return (props.currentStep + 1) * (100 / props.steps.length);
+});
+
+
+const progressBarStyle = computed(() => {
+  return {
+    width: `${progressPercentage.value}%`,
+  };
+});
+
+const stepClass = (index) => {
+  return {
+    'text-primary fw-bold': props.currentStep === index,
+    'text-muted': props.currentStep !== index,
+  };
+};
 </script>
+
+<style scoped>
+.progress-wrapper {
+  width: 100%;
+}
+
+.progress {
+  height: 4px;
+}
+
+.text-primary {
+  color: #6a4cc3;
+}
+
+.fw-bold {
+  font-weight: 700;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+</style>

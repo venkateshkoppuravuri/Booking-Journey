@@ -18,7 +18,7 @@
             :selectedOffices="selectedOffices"
             @change-office="showOfficeModal = true"
           />
-        
+
           <DetailsForm
             v-if="currentStep === 1"
             :formData="formData"
@@ -26,7 +26,7 @@
             :selectedDate="selectedDate"
             :selectedTime="selectedTime"
           />
-      
+
           <ConfirmationApp
             v-if="currentStep === 2"
             :selectedOffices="selectedOffices"
@@ -39,19 +39,17 @@
           class="card-body text-center"
           v-if="currentStep == 0 && !selectedOffices.length"
         >
-          <div class="my-0">
-            <button
-              class="btn-primary"
-              @click="showOfficeModal = true"
-              :disabled="!canSelectOffice"
-            >
-              {{
-                selectedOffices.length
-                  ? "Change Office Selection"
-                  : "Select Offices"
-              }}
-            </button>
-          </div>
+          <button
+            class="btn-primary"
+            @click="showOfficeModal = true"
+            :disabled="!canSelectOffice"
+          >
+            {{
+              selectedOffices.length
+                ? "Change Office Selection"
+                : "Select Offices"
+            }}
+          </button>
         </div>
 
         <NavigationButtons
@@ -64,80 +62,12 @@
       </div>
     </div>
 
-
-    <div class="modal" v-if="showOfficeModal && currentStep == 0">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Select Offices</h5>
-            <button
-              type="button"
-              class="btn-close"
-              @click="closeOfficeModal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div v-if="loading" class="text-center py-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div>
-            <div v-else>
-              <p class="text-muted mb-3">
-                Select one or more offices for your appointment
-              </p>
-              <div class="office-list">
-                <div
-                  v-for="office in offices"
-                  :key="office.id"
-                  class="office-item p-3 mb-2 rounded cursor-pointer"
-                  :class="{ selected: selectedOfficeIds.includes(office.id) }"
-                  @click="toggleOffice(office.id)"
-                >
-                  <div class="d-flex align-items-center">
-                    <div class="me-3">
-                      <i class="bi bi-building" style="color: blueviolet"></i>
-                    </div>
-                    <div>
-                      <h6 class="mb-1">{{ office.name }}</h6>
-                      <small class="text-muted"
-                        >{{ office.distance }} miles from your location</small
-                      >
-                      <small class="d-block text-muted">{{
-                        office.address
-                      }}</small>
-                    </div>
-                    <div class="ms-auto">
-                      <i
-                        class="bi"
-                        :class="
-                          selectedOfficeIds.includes(office.id)
-                            ? 'bi-check-circle-fill text-primary'
-                            : 'bi-circle'
-                        "
-                      ></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn-primary s"
-              @click="saveOfficeSelection"
-              :disabled="!selectedOfficeIds.length"
-            >
-              Save
-              <span> &gt;</span>
-            </button>
-            <p @click="closeOfficeModal" class="goback">
-              <span>&lt; </span> Go back
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <OfficeSelectionModal
+      :show="showOfficeModal"
+      :initialSelected="selectedOffices"
+      @update:show="showOfficeModal = $event"
+      @save="saveOfficeSelection"
+    />
   </div>
 </template>
 
@@ -149,23 +79,21 @@ import TimeSelection from "./components/TimeSelection.vue";
 import DetailsForm from "./components/DetailsForm.vue";
 import NavigationButtons from "./components/NavigationButtons.vue";
 import ConfirmationApp from "./components/ConfirmationApp.vue";
+import OfficeSelectionModal from "./components/OfficeSelectionModal.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './styles/style.scss'
+import "./styles/style.scss";
 
 const steps = [
-  { id: 1, title: "1. Time and Date" },
-  { id: 2, title: "2. Visitor Details" },
-  { id: 3, title: "3. Confirmation" },
+  { id: 1, title: "Time and Date" },
+  { id: 2, title: "Visitor Details" },
+  { id: 3, title: "Confirmation" },
 ];
 
 const currentStep = ref(0);
 const showOfficeModal = ref(false);
 const selectedOffices = ref([]);
-const selectedOfficeIds = ref([]);
 const selectedDate = ref(null);
 const selectedTime = ref(null);
-const offices = ref([]);
-const loading = ref(true);
 
 const formData = ref({
   name: "",
@@ -174,19 +102,16 @@ const formData = ref({
   notes: "",
 });
 
-const canSelectOffice = computed(() => {
-  return selectedDate.value && selectedTime.value;
-});
+const canSelectOffice = computed(
+  () => selectedDate.value && selectedTime.value
+);
 
 const canProceed = computed(() => {
-  if (currentStep.value === 0) {
-    return (
-      selectedDate.value &&
-      selectedTime.value &&
-      selectedOffices.value.length > 0
-    );
-  }
-  return true;
+  return currentStep.value === 0
+    ? selectedDate.value &&
+        selectedTime.value &&
+        selectedOffices.value.length > 0
+    : true;
 });
 
 const isFormValid = computed(() => {
@@ -199,18 +124,15 @@ const isFormValid = computed(() => {
 
 onMounted(async () => {
   try {
-    offices.value = await mockApi.getOffices();
+    await mockApi.getOffices();
   } catch (error) {
     console.error("Error loading offices:", error);
-  } finally {
-    loading.value = false;
   }
 });
 
 const selectDate = (date) => {
   selectedDate.value = date;
 };
-
 const selectTime = (time) => {
   selectedTime.value = time;
 };
@@ -219,25 +141,8 @@ const updateForm = (newFormData) => {
   formData.value = { ...formData.value, ...newFormData };
 };
 
-const toggleOffice = (officeId) => {
-  const index = selectedOfficeIds.value.indexOf(officeId);
-  if (index === -1) {
-    selectedOfficeIds.value.push(officeId);
-  } else {
-    selectedOfficeIds.value.splice(index, 1);
-  }
-};
-
-const closeOfficeModal = () => {
-  selectedOfficeIds.value = selectedOffices.value.map((office) => office.id);
-  showOfficeModal.value = false;
-};
-
-const saveOfficeSelection = () => {
-  const selectedOfficeData = offices.value.filter((office) =>
-    selectedOfficeIds.value.includes(office.id)
-  );
-  selectedOffices.value = selectedOfficeData;
+const saveOfficeSelection = (selectedOfficesData) => {
+  selectedOffices.value = selectedOfficesData;
   showOfficeModal.value = false;
 };
 
@@ -295,11 +200,6 @@ const previousStep = () => {
 .office-item {
   border: 1px solid #dee2e6;
   transition: all 0.2s;
-  /* cursor: pointer; */
-}
-
-.office-item:hover {
-  background-color: #f8f9fa;
 }
 
 .office-item.selected {
@@ -323,6 +223,7 @@ const previousStep = () => {
   max-height: 400px;
   overflow-y: auto;
 }
+
 .modal-footer {
   display: grid;
   align-items: center;

@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="close">Go back</button>
+          <BackButton @click="close" />
           <button
             class="btn btn-primary"
             @click="save"
@@ -68,8 +68,9 @@
 </template>
 
 <script setup>
-import { mockApi } from "@/services/api";
 import { ref, onMounted, defineProps, defineEmits } from "vue";
+import { mockApi } from "@/services/api";
+import BackButton from "./BackButton.vue";
 
 const props = defineProps({
   show: Boolean,
@@ -128,10 +129,6 @@ const save = () => {
   border: 1px solid #dee2e6;
   transition: all 0.2s;
   cursor: pointer;
-}
-
-.office-item:hover {
-  background-color: #f8f9fa;
 }
 
 .office-item.selected {

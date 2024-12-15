@@ -1,43 +1,27 @@
 <template>
-  <div
-    class="flex justify-between items-center mt-4"
-    style="display: flex; justify-content: space-between"
-  >
-    <button
-      v-if="currentStep > 0"
-      @click="$emit('previous-step')"
-      class="btn-secondary"
-    >
-      Go back
-    </button>
+  <div class="flex justify-between items-center mt-4">
+    <BackButton v-if="currentStep > 0" @click="onPreviousStep" />
 
     <div class="flex gap-2 ml-auto">
-      <button
+      <ContinueButton
         v-if="currentStep < 1"
-        @click="$emit('next-step')"
         :disabled="!canProceed"
-        class="btn-primary"
-      >
-        Continue
-        <span> &gt;</span>
-      </button>
+        @click="onNextStep"
+      />
 
-      <button
-        v-if="currentStep == 1"
-        @click="$emit('next-step')"
+      <ContinueButton
+        v-if="currentStep === 1"
         :disabled="!isFormValid"
-        class="btn-primary"
-      >
-        Continue
-        <span> &gt;</span>
-      </button>
+        @click="onNextStep"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmits } from "vue";
-import '../styles/style.scss'
+import BackButton from "./BackButton.vue";
+import ContinueButton from "./ContinueButton.vue";
 
 defineProps({
   currentStep: {
@@ -54,6 +38,13 @@ defineProps({
   },
 });
 
-defineEmits(["previous-step", "next-step", "submit-booking"]);
-</script>
+const emit = defineEmits(["previous-step", "next-step"]);
 
+const onPreviousStep = () => {
+  emit("previous-step");
+};
+
+const onNextStep = () => {
+  emit("next-step");
+};
+</script>
