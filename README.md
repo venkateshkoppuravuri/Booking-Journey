@@ -46,15 +46,22 @@ This project is a Vue.js application designed to facilitate time and office slot
    This will generate a production-ready build in the `dist` folder.
 
 ## Projector Structure
-src/
-├── components/
-│   ├── ConfirmationApp.vue
-│   ├── DetailsForm.vue
-│   ├── NavigationButtons.vue
-│   └── OfficeSelectionModal.vue
-│   └── ProgressBar.vue
-│   └── TimeSelection.vue
-├── services/
-│   └── api.js
-├── App.vue
-└── main.js
+src/  
+├── components/  
+│   ├── ConfirmationApp.vue      
+|   ├── BackButton.vue
+|   ├── ContinueButton.vue
+│   ├── DetailsForm.vue           
+|   ├── DetailIttem.vue
+|   ├── FormField.vue
+|   ├── LoadingSpinner.vue
+│   ├── NavigationButtons.vue     
+│   ├── OfficeSelectionModal.vue  
+|   ├── OfficeList.vue
+│   ├── ProgressBar.vue            
+│   ├── TimeSelection.vue           
+├── services/  
+│   └── api.js                    
+├── App.vue                      
+├── main.js                       
+
