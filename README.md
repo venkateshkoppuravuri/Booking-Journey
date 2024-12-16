@@ -49,15 +49,15 @@ This project is a Vue.js application designed to facilitate time and office slot
 src/  
 ├── components/  
 │   ├── ConfirmationApp.vue      
-|   ├── BackButton.vue
-|   ├── ContinueButton.vue
+│   ├── BackButton.vue
+│   ├── ContinueButton.vue
 │   ├── DetailsForm.vue           
-|   ├── DetailIttem.vue
-|   ├── FormField.vue
-|   ├── LoadingSpinner.vue
+│   ├── DetailIttem.vue
+│   ├── FormField.vue
+│   ├── LoadingSpinner.vue
 │   ├── NavigationButtons.vue     
 │   ├── OfficeSelectionModal.vue  
-|   ├── OfficeList.vue
+│   ├── OfficeList.vue
 │   ├── ProgressBar.vue            
 │   ├── TimeSelection.vue           
 ├── services/  
